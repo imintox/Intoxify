@@ -1,4 +1,4 @@
-# Intoxify
+# Intoxify - UNTESTED
 
 A Spotify playlist generator that runs entirely in your browser. Pick up to 5 artists or tracks, tune the mix, and save it to your Spotify account.
 

@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intoxify</title>
+<style>
+:root{--bg:#0b0b10;--panel:#14141c;--panel2:#1b1b26;--line:#262636;--text:#ececf4;--mute:#8d8da6;--acc:#9b6bff;--acc2:#ff5fa2}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,#1d1233 0,transparent 60%),var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:1050px;margin:0 auto;padding:28px 18px 140px}
+h1{margin:0;font-size:34px;letter-spacing:-.02em;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
+.sub{color:var(--mute);margin:4px 0 24px}
+.grid{display:grid;grid-template-columns:380px 1fr;gap:20px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card h2{margin:0 0 12px;font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);font-weight:600}
+.seg{display:flex;background:var(--panel2);border-radius:10px;padding:3px;margin-bottom:10px}
+.seg button{flex:1;background:none;border:0;color:var(--mute);padding:7px;border-radius:8px;cursor:pointer;font:inherit}
+.seg button.on{background:var(--line);color:var(--text)}
+input[type=text]{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:11px 12px;border-radius:10px;font:inherit;outline:none}
+input[type=text]:focus{border-color:var(--acc)}
+input:disabled{opacity:.5;cursor:not-allowed}
+.sugg{position:relative}
+.sugg ul{list-style:none;margin:6px 0 0;padding:0;background:var(--panel2);border:1px solid var(--line);border-radius:10px;position:absolute;left:0;right:0;z-index:5;max-height:300px;overflow:auto}
+.sugg li{display:flex;gap:10px;align-items:center;padding:8px 10px;cursor:pointer}
+.sugg li:hover{background:var(--line)}
+.sugg img{width:36px;height:36px;border-radius:6px;object-fit:cover;background:var(--line)}
+.sugg small,.row small{color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.chip{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 12px;font-size:13px}
+.chip button{background:var(--line);border:0;color:var(--text);width:20px;height:20px;border-radius:50%;cursor:pointer;line-height:1}
+.ctl{margin:16px 0}
+.ctl label{display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin-bottom:6px}
+.ctl label b{color:var(--text);font-weight:500}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.yr{display:flex;gap:10px}.yr input{width:100%}
+.tog{display:flex;align-items:center;gap:10px;margin:10px 0;color:var(--mute);font-size:14px}
+.tog input{accent-color:var(--acc);width:16px;height:16px}
+.go{width:100%;margin-top:8px;padding:13px;border:0;border-radius:12px;font:inherit;font-weight:600;color:#fff;cursor:pointer;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+.go:disabled{opacity:.4;cursor:not-allowed}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.bar button{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:7px 12px;border-radius:9px;font:inherit;font-size:13px;cursor:pointer}
+.bar button:hover{border-color:var(--acc)}
+.bar button:disabled{opacity:.5;cursor:wait}
+#spRes a{color:var(--acc);margin-left:6px}
+.row{display:grid;grid-template-columns:28px 48px 1fr auto;gap:12px;align-items:center;padding:8px 6px;border-radius:10px}
+.row:hover{background:var(--panel2)}
+.row.play{background:#241a3d}
+.row .n{color:var(--mute);text-align:center;font-size:13px}
+.row img{width:48px;height:48px;border-radius:8px;object-fit:cover;background:var(--line);cursor:pointer}
+.row .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.row .t div:first-child{font-weight:500;overflow:hidden;text-overflow:ellipsis}
+.acts{display:flex;gap:6px}
+.acts a,.acts button{background:none;border:1px solid var(--line);color:var(--mute);border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer;text-decoration:none}
+.acts a:hover,.acts button:hover{color:var(--text);border-color:var(--acc)}
+.empty{color:var(--mute);text-align:center;padding:60px 10px}
+.msg{color:var(--acc2);font-size:13px;margin-top:8px;min-height:18px}
+.key .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.key input{margin-bottom:8px}
+.key button{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:7px 12px;border-radius:9px;font:inherit;font-size:13px;cursor:pointer}
+.key button:hover{border-color:var(--acc)}
+.key small{color:var(--mute)}.key a{color:var(--acc)}
+.key code{background:var(--panel2);padding:2px 6px;border-radius:6px;word-break:break-all;color:var(--text);font-size:12px}
+.player{position:fixed;left:0;right:0;bottom:0;background:#0f0f16ee;backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 18px;display:none;align-items:center;gap:10px}
+.player.show{display:flex}
+.player iframe{flex:1;min-width:0;height:80px;border:0;border-radius:12px}
+.player button{background:var(--panel2);border:1px solid var(--line);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer}
+.foot{color:var(--mute);font-size:12px;margin-top:20px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Intoxify</h1>
+  <p class="sub">Connect your own Spotify app, pick up to 5 artists or tracks, tune the vibe, get a playlist.</p>
+
+  <div class="grid">
+    <div>
+      <div class="card key" style="margin-bottom:16px">
+        <h2>Spotify</h2>
+        <input type="text" id="spId" placeholder="Your Spotify Client ID" autocomplete="off">
+        <div class="r"><button id="spConnect">Connect Spotify</button><button id="spOff" hidden>Disconnect</button><small id="spState"></small></div>
+        <small style="display:block;margin-top:8px">Create an app at <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">developer.spotify.com/dashboard</a> and add this exact Redirect URI: <code id="ruri"></code></small>
+      </div>
+
+      <div class="card">
+        <h2>Seeds <span id="seedCount">0/5</span></h2>
+        <div class="seg"><button id="mArtist" class="on">Artists</button><button id="mTrack">Tracks</button></div>
+        <div class="sugg">
+          <input type="text" id="q" placeholder="Connect Spotify first" autocomplete="off" disabled>
+          <ul id="sg" hidden></ul>
+        </div>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Tune</h2>
+        <div class="ctl"><label>Playlist size <b id="vN">25</b></label><input type="range" id="n" min="10" max="50" value="25"></div>
+        <div class="ctl"><label>Familiar ↔ Discovery <b id="vD">50%</b></label><input type="range" id="d" min="0" max="100" value="50"></div>
+        <div class="ctl"><label>Release years <b id="vY">any</b></label>
+          <div class="yr"><input type="text" id="y1" placeholder="from" inputmode="numeric"><input type="text" id="y2" placeholder="to" inputmode="numeric"></div>
+        </div>
+        <div class="tog"><input type="checkbox" id="one"><span>Max 2 tracks per artist</span></div>
+        <div class="tog"><input type="checkbox" id="clean"><span>Hide explicit tracks</span></div>
+        <button class="go" id="go" disabled>Generate playlist</button>
+        <div class="msg" id="msg"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Your playlist</h2>
+      <div class="bar" id="bar" hidden>
+        <button id="shuf">Shuffle</button>
+        <button id="regen">Regenerate</button>
+        <button id="copy">Copy list</button>
+        <button id="csv">Download CSV</button>
+        <button id="spSave">Save to Spotify</button><span id="spRes"></span>
+      </div>
+      <div id="out"><div class="empty">Connect Spotify, add a few seeds and hit generate.</div></div>
+    </div>
+  </div>
+  <div class="foot">Built only on the Spotify Web API with your own Client ID. Spotify no longer gives dev-mode apps recommendations, so mixes come from your seeds' tracks plus genre searches. Your login stays in this browser.</div>
+</div>
+
+<div class="player" id="pl">
+  <iframe id="emb" title="Spotify player" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  <button id="prev" title="Previous">◀</button><button id="next" title="Next">▶</button><button id="close" title="Close">✕</button>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let mode='artist', seeds=[], tracks=[], cur=-1, timer, lastErr=null;
+const PH='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><rect width="48" height="48" fill="#262636"/><text x="24" y="31" font-size="22" text-anchor="middle" fill="#8d8da6">♪</text></svg>');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function flash(t){$('msg').textContent=t;if(t)setTimeout(()=>{if($('msg').textContent==t)$('msg').textContent=''},5000)}
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+async function pool(tasks,n){const out=new Array(tasks.length);let i=0;
+  await Promise.all(Array.from({length:Math.min(n,tasks.length)},async()=>{while(i<tasks.length){const k=i++;out[k]=await tasks[k]()}}));return out}
+
+// ---------- Spotify auth (PKCE with the user's own Client ID) ----------
+const SL={id:'intoxify_sp_id',tok:'intoxify_sp_tok',ver:'intoxify_sp_ver'};
+const RURI=location.origin+location.pathname;
+const webOK=/^https?:$/.test(location.protocol);
+let SPID='',SP=null;
+try{SPID=localStorage.getItem(SL.id)||'';SP=JSON.parse(localStorage.getItem(SL.tok)||'null')}catch(e){}
+const connected=()=>!!(SP&&SP.access);
+const b64u=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+function spUI(){
+  const on=connected();
+  $('ruri').textContent=webOK?RURI:'(open this page over http://127.0.0.1 or https first)';
+  $('spId').value=SPID;$('spId').hidden=on;$('spConnect').hidden=on;$('spOff').hidden=!on;
+  $('spState').textContent=on?'Connected ✓':(webOK?'Not connected':'Spotify login does not work from a file:// page. Run python3 -m http.server 8888 in this folder, then open http://127.0.0.1:8888/intoxify.html');
+  $('q').disabled=!on;$('q').placeholder=on?(mode=='artist'?'Search an artist…':'Search a track…'):'Connect Spotify first';
+  renderSeeds();
+}
+$('spConnect').onclick=async()=>{
+  const id=$('spId').value.trim();if(!id)return flash('Paste your Spotify Client ID first.');
+  if(!webOK)return flash('Open this page over http://127.0.0.1 or https to use Spotify login.');
+  SPID=id;try{localStorage.setItem(SL.id,id)}catch(e){}
+  const v=b64u(crypto.getRandomValues(new Uint8Array(64)));
+  const c=b64u(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)));
+  try{localStorage.setItem(SL.ver,v)}catch(e){}
+  location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams({client_id:id,response_type:'code',redirect_uri:RURI,code_challenge_method:'S256',code_challenge:c,scope:'playlist-modify-private playlist-modify-public'});
+};
+$('spOff').onclick=()=>{SP=null;try{localStorage.removeItem(SL.tok)}catch(e){}spUI()};
+async function spToken(body){
+  const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:SPID,...body})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(d.error_description||'Spotify login failed');
+  SP={access:d.access_token,refresh:d.refresh_token||(SP&&SP.refresh),exp:Date.now()+d.expires_in*1000-30000};
+  try{localStorage.setItem(SL.tok,JSON.stringify(SP))}catch(e){}
+}
+async function spCallback(){
+  const q=new URLSearchParams(location.search),code=q.get('code'),err=q.get('error');
+  if(!code&&!err)return;
+  history.replaceState({},'',RURI);
+  if(err)throw new Error('Spotify: '+err);
+  await spToken({grant_type:'authorization_code',code,redirect_uri:RURI,code_verifier:localStorage.getItem(SL.ver)||''});
+}
+async function spAuth(){
+  if(!SP)throw new Error('Connect Spotify first');
+  if(Date.now()>SP.exp){
+    const bail=()=>{SP=null;try{localStorage.removeItem(SL.tok)}catch(_){}spUI();throw new Error('Spotify session expired. Reconnect.')};
+    if(!SP.refresh)bail();
+    try{await spToken({grant_type:'refresh_token',refresh_token:SP.refresh})}catch(e){bail()}
+  }
+  return SP.access;
+}
+async function sp(path,opt={},retry=0){
+  const tok=await spAuth();
+  const r=await fetch('https://api.spotify.com/v1'+path,{...opt,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'}});
+  if(r.status==429&&retry<3){await new Promise(z=>setTimeout(z,((+r.headers.get('Retry-After'))||1)*1000));return sp(path,opt,retry+1)}
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok){const e=new Error((d.error&&d.error.message)||('Spotify error '+r.status));e.status=r.status;throw e}
+  return d;
+}
+const mk=x=>{const im=(x.album&&x.album.images)||[];return{id:x.id,uri:x.uri,title:x.name,artist:x.artists[0].name,artistIds:x.artists.map(a=>a.id),
+  album:x.album&&x.album.name,img:(im[1]||im[0]||{}).url||'',url:x.external_urls&&x.external_urls.spotify,
+  year:+((x.album&&x.album.release_date)||'0').slice(0,4),explicit:!!x.explicit}};
+const st=(q,offset=0)=>sp('/search?'+new URLSearchParams({q,type:'track',limit:10,offset}))
+  .then(d=>((d.tracks&&d.tracks.items)||[]).filter(Boolean).map(mk))
+  .catch(e=>{if(e.status==401)throw e;lastErr=e;return[]});
+
+// ---------- seeds ----------
+$('mArtist').onclick=()=>setMode('artist');
+$('mTrack').onclick=()=>setMode('track');
+function setMode(m){mode=m;$('mArtist').classList.toggle('on',m=='artist');$('mTrack').classList.toggle('on',m=='track');
+  $('q').placeholder=connected()?(m=='artist'?'Search an artist…':'Search a track…'):'Connect Spotify first';$('q').value='';$('sg').hidden=true}
+$('q').addEventListener('input',()=>{clearTimeout(timer);const v=$('q').value.trim();
+  if(v.length<2){$('sg').hidden=true;return}
+  timer=setTimeout(()=>search(v),300)});
+document.addEventListener('click',e=>{if(!e.target.closest('.sugg'))$('sg').hidden=true});
+async function search(v){
+  if(!connected())return flash('Connect Spotify first.');
+  try{
+    const d=await sp('/search?'+new URLSearchParams({q:v,type:mode,limit:8}));
+    const r=((mode=='artist'?d.artists:d.tracks)||{}).items||[];
+    const ul=$('sg');ul.innerHTML='';
+    if(!r.length)ul.innerHTML='<li><small>No results</small></li>';
+    r.filter(Boolean).forEach(x=>{
+      const li=document.createElement('li');
+      if(mode=='artist'){
+        const im=x.images||[];
+        li.innerHTML=`<img src="${esc((im[im.length-1]||{}).url||PH)}" style="border-radius:50%"><div><div>${esc(x.name)}</div><small>${esc((x.genres||[]).slice(0,2).join(', '))}</small></div>`;
+        li.onclick=()=>addSeed({type:'artist',name:x.name,artistId:x.id,genres:x.genres||[]});
+      }else{
+        const t=mk(x);
+        li.innerHTML=`<img src="${esc(t.img||PH)}"><div><div>${esc(t.title)}</div><small>${esc(t.artist)}</small></div>`;
+        li.onclick=()=>addSeed({type:'track',name:t.title,sub:t.artist,artistId:t.artistIds[0],genres:[],track:t});
+      }
+      ul.appendChild(li)});
+    ul.hidden=false;
+  }catch(e){flash(e.status==403?'Spotify refused the search. Check that your account is added under User Management and the owner has Premium.':e.message)}
+}
+function addSeed(s){
+  if(seeds.length>=5)return flash('Max 5 seeds.');
+  if(seeds.some(x=>x.type==s.type&&x.artistId==s.artistId&&x.name==s.name))return;
+  seeds.push(s);$('q').value='';$('sg').hidden=true;renderSeeds();
+}
+function renderSeeds(){
+  $('seedCount').textContent=seeds.length+'/5';$('go').disabled=!(connected()&&seeds.length);
+  $('chips').innerHTML='';
+  seeds.forEach((s,i)=>{const c=document.createElement('div');c.className='chip';
+    c.innerHTML=`<span>${s.type=='track'?'♫ ':''}${esc(s.name)}${s.sub?' <small style="color:var(--mute)">· '+esc(s.sub)+'</small>':''}</span><button>×</button>`;
+    c.querySelector('button').onclick=()=>{seeds.splice(i,1);renderSeeds()};$('chips').appendChild(c)})
+}
+
+// ---------- sliders ----------
+$('n').oninput=()=>$('vN').textContent=$('n').value;
+$('d').oninput=()=>$('vD').textContent=$('d').value+'%';
+function yrLabel(){const a=$('y1').value.trim(),b=$('y2').value.trim();$('vY').textContent=a||b?(a||'…')+' – '+(b||'now'):'any'}
+$('y1').oninput=$('y2').oninput=yrLabel;
+
+// ---------- generation ----------
+$('go').onclick=generate;$('regen').onclick=generate;
+$('shuf').onclick=()=>{stop();shuffle(tracks);renderTracks()};
+const dk=t=>t.title.toLowerCase().replace(/\s*[-(\[].*$/,'').trim()+'|'+t.artist.toLowerCase();
+const qs=s=>String(s).replace(/"/g,'');
+
+async function generate(){
+  if(!connected()||!seeds.length)return;
+  $('go').disabled=true;stop();flash('');lastErr=null;
+  $('out').innerHTML='<div class="empty">Mixing…</div>';
+  const N=+$('n').value, disc=+$('d').value/100;
+  const y1=parseInt($('y1').value)||0, y2=parseInt($('y2').value)||9999, clean=$('clean').checked, cap=$('one').checked?2:99;
+  const fine=t=>(!t.year||(t.year>=y1&&t.year<=y2))&&!(clean&&t.explicit);
+  const thisYear=new Date().getFullYear();
+  const yq=(y1||y2<9999)?` year:${y1||1900}-${y2<9999?y2:thisYear}`:'';
+  try{
+    // genres for seeds that lack them
+    await Promise.all(seeds.map(async s=>{
+      if(s.genres&&s.genres.length)return;
+      try{const a=await sp('/artists/'+s.artistId);s.genres=a.genres||[]}catch(e){s.genres=[]}
+    }));
+    const seedIds=new Set(seeds.map(s=>s.artistId));
+    const gset=[...new Set(seeds.flatMap(s=>(s.genres||[]).slice(0,3)))];
+
+    // familiar: each seed artist's tracks
+    const famTasks=[];
+    seeds.forEach((s,si)=>{
+      const a=s.type=='artist'?s.name:s.sub;
+      [0,10,20].forEach(o=>famTasks.push(()=>st(`artist:"${qs(a)}"`,o).then(l=>({si,l:l.filter(t=>t.artistIds.includes(s.artistId))}))));
+    });
+    // discovery: genre searches at random depths
+    const discTasks=[];
+    if(gset.length&&disc>0)for(let k=0;k<8;k++){
+      const g=gset[k%gset.length], off=(Math.random()*30|0)*10;
+      discTasks.push(()=>st(`genre:"${qs(g)}"${yq}`,off));
+    }
+    const [famRes,discRes]=await Promise.all([pool(famTasks,5),pool(discTasks,5)]);
+    const famL=seeds.map(()=>[]);
+    famRes.forEach(r=>r&&famL[r.si].push(...r.l));
+    const famQ=[];
+    for(let i=0;famL.some(l=>i<l.length);i++)famL.forEach(l=>{if(l[i])famQ.push(l[i])});
+    const discQ=shuffle(discRes.flat().filter(t=>!t.artistIds.some(id=>seedIds.has(id))));
+
+    const nFam=Math.round(N*(1-disc)), out=[], ids=new Set(), keys=new Set(), per={};
+    const add=(t,tag)=>{
+      if(!t||!t.id||!fine(t))return false;
+      const k=dk(t);
+      if(ids.has(t.id)||keys.has(k)||(per[t.artist]||0)>=cap)return false;
+      ids.add(t.id);keys.add(k);per[t.artist]=(per[t.artist]||0)+1;out.push({...t,tag});return true;
+    };
+    seeds.filter(s=>s.type=='track').forEach(s=>{if(out.length<nFam)add(s.track,'seed')});
+    for(const t of famQ){if(out.length>=nFam)break;add(t,'familiar')}
+    for(const t of discQ){if(out.length>=N)break;add(t,'new')}
+    for(const t of famQ){if(out.length>=N)break;add(t,'familiar')}
+    tracks=shuffle(out);
+
+    if(!tracks.length){
+      $('bar').hidden=true;
+      $('out').innerHTML='<div class="empty">'+esc(lastErr?('Spotify said: '+lastErr.message):'Nothing matched those filters. Loosen the year range or explicit filter.')+'</div>';
+    }else{
+      renderTracks();
+      if(disc>0&&!gset.length)flash('Spotify returned no genre data for these seeds, so this mix is seeds only.');
+      else if(tracks.length<N)flash(`Only found ${tracks.length} tracks with those filters.`);
+    }
+  }catch(e){
+    $('out').innerHTML='<div class="empty">'+esc(e.status==403?'Spotify refused this request. Dev-mode apps need the owner on Premium and your account under User Management.':(e.message||'Something went wrong'))+'</div>';
+  }
+  $('go').disabled=!(connected()&&seeds.length);
+}
+
+// ---------- render ----------
+function renderTracks(){
+  $('bar').hidden=!tracks.length;$('spRes').innerHTML='';
+  const box=$('out');box.innerHTML='';
+  tracks.forEach((t,i)=>{
+    const r=document.createElement('div');r.className='row'+(i===cur?' play':'');
+    r.innerHTML=`<div class="n">${i+1}</div><img src="${esc(t.img||PH)}" alt=""><div class="t"><div>${esc(t.title)}${t.explicit?' <small>E</small>':''}</div><small>${esc(t.artist)}${t.year?' · '+t.year:''}</small></div>
+      <div class="acts"><a target="_blank" rel="noopener" href="${esc(t.url||'https://open.spotify.com/track/'+t.id)}">Spotify</a><button>✕</button></div>`;
+    r.querySelector('img').onclick=()=>play(i);
+    r.querySelector('.t').onclick=()=>play(i);
+    r.querySelector('button').onclick=()=>{if(i===cur)stop();else if(i<cur)cur--;tracks.splice(i,1);renderTracks()};
+    box.appendChild(r)});
+}
+
+// ---------- player (Spotify embed) ----------
+function mark(){document.querySelectorAll('.row').forEach((r,k)=>r.classList.toggle('play',k===cur))}
+function play(i){
+  const t=tracks[i];if(!t)return;cur=i;
+  $('emb').src='https://open.spotify.com/embed/track/'+t.id+'?utm_source=generator&theme=0';
+  $('pl').classList.add('show');mark();
+}
+function stop(){$('emb').src='about:blank';cur=-1;$('pl').classList.remove('show');mark()}
+$('next').onclick=()=>{if(cur<tracks.length-1)play(cur+1)};
+$('prev').onclick=()=>{if(cur>0)play(cur-1)};
+$('close').onclick=stop;
+
+// ---------- save to Spotify ----------
+$('spSave').onclick=async()=>{
+  if(!tracks.length)return;
+  const btn=$('spSave');btn.disabled=true;$('spRes').innerHTML='';
+  try{
+    const uris=tracks.map(t=>t.uri).filter(Boolean);
+    const payload=JSON.stringify({name:'Intoxify · '+seeds.map(s=>s.name).slice(0,3).join(', '),description:'Generated with Intoxify',public:false});
+    let pl;
+    try{pl=await sp('/me/playlists',{method:'POST',body:payload})}
+    catch(e){const me=await sp('/me');pl=await sp('/users/'+me.id+'/playlists',{method:'POST',body:payload})}
+    for(let i=0;i<uris.length;i+=100){
+      const body=JSON.stringify({uris:uris.slice(i,i+100)});
+      try{await sp('/playlists/'+pl.id+'/items',{method:'POST',body})}catch(e){await sp('/playlists/'+pl.id+'/tracks',{method:'POST',body})}
+    }
+    flash(`Saved ${uris.length} tracks.`);
+    $('spRes').innerHTML=`<a target="_blank" rel="noopener" href="${esc((pl.external_urls&&pl.external_urls.spotify)||'https://open.spotify.com')}">Open playlist</a>`;
+  }catch(e){
+    flash(e.status==403?'Spotify refused this. Dev-mode apps need the owner on Premium, your account under User Management, and playlist write access.':e.message);
+  }
+  btn.disabled=false;
+};
+
+// ---------- export ----------
+$('copy').onclick=async()=>{const txt=tracks.map((t,i)=>`${i+1}. ${t.artist} - ${t.title}`).join('\n');
+  try{await navigator.clipboard.writeText(txt);flash('Copied.')}catch{flash('Copy blocked by the browser.')}};
+$('csv').onclick=()=>{const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
+  const csv='Title,Artist,Album,Year,Spotify URL\n'+tracks.map(t=>[t.title,t.artist,t.album,t.year,t.url].map(q).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='intoxify-playlist.csv';a.click()};
+
+spUI();
+spCallback().catch(e=>flash(e.message)).then(spUI);
+</script>
+</body>
+</html>
